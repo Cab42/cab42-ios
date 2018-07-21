@@ -1,0 +1,57 @@
+
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "0iC-Yr-4x0"; */
+"0iC-Yr-4x0.placeholder" = "Correo";
+
+/* Class = "UILabel"; text = "Reset Password"; ObjectID = "9rO-b6-yTm"; */
+"9rO-b6-yTm.text" = "Cambiar Contraseña";
+
+/* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "Aba-Jm-dsV"; */
+"Aba-Jm-dsV.normalTitle" = "Registro";
+
+/* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "F45-n3-r3E"; */
+"F45-n3-r3E.normalTitle" = "Registro";
+
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "Gdf-9o-97X"; */
+"Gdf-9o-97X.placeholder" = "Correo";
+
+/* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "Hf1-on-poq"; */
+"Hf1-on-poq.normalTitle" = "Registro";
+
+/* Class = "UILabel"; text = "You are logged in"; ObjectID = "Hgq-fx-vjN"; */
+"Hgq-fx-vjN.text" = "You are logged in";
+
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "Mzg-Nq-DOO"; */
+"Mzg-Nq-DOO.placeholder" = "Correo";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "Tio-nE-AiR"; */
+"Tio-nE-AiR.normalTitle" = "Entrar";
+
+/* Class = "UIButton"; normalTitle = "Salir"; ObjectID = "TjQ-Gc-DiE"; */
+"TjQ-Gc-DiE.normalTitle" = "Salir";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "ZQO-ii-IBg"; */
+"ZQO-ii-IBg.normalTitle" = "Entrar";
+
+/* Class = "UIButton"; normalTitle = "Reset Password"; ObjectID = "cTM-6G-or4"; */
+"cTM-6G-or4.normalTitle" = "Cambiar Contraseña";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "gDl-65-jdF"; */
+"gDl-65-jdF.placeholder" = "Contraseña";
+
+/* Class = "UILabel"; text = "Sign Up"; ObjectID = "ghp-pE-zr1"; */
+"ghp-pE-zr1.text" = "Registro";
+
+/* Class = "UILabel"; text = "Login"; ObjectID = "jLr-1y-lvg"; */
+"jLr-1y-lvg.text" = "Entrar";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "rbi-vz-ndh"; */
+"rbi-vz-ndh.normalTitle" = "Entrar";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "sWX-1N-KFc"; */
+"sWX-1N-KFc.placeholder" = "Contraseña";
+
+/* Class = "UIButton"; normalTitle = "Reset Password"; ObjectID = "ser-lp-UgN"; */
+"ser-lp-UgN.normalTitle" = "Cambiar Contraseña";
+
+/* Class = "UIButton"; normalTitle = "Reset Password"; ObjectID = "yHr-LF-TVW"; */
+"yHr-LF-TVW.normalTitle" = "Cambiar Contraseña";

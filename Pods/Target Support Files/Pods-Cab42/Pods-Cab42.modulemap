@@ -1,0 +1,6 @@
+framework module Pods_Cab42 {
+  umbrella header "Pods-Cab42-umbrella.h"
+
+  export *
+  module * { export * }
+}

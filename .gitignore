@@ -1,0 +1,10 @@
+
+\.DS_Store
+
+Cab42/Pods/
+
+Cab42/GoogleService-Info\.plist
+
+Cab42/Cab42\.xcworkspace/
+
+Cab42/Podfile\.lock
