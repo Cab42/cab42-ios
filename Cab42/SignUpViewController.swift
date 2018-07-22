@@ -2,8 +2,8 @@
 //  SignUpViewController.swift
 //  Cab42
 //
-//  Created by James Dacombe on 16/11/2016.
-//  Copyright © 2016 AppCoda. All rights reserved.
+//  Created by Andres Margendie on 22/07/2018.
+//  Copyright © 2018 AppCoda. All rights reserved.
 //
 
 import UIKit
@@ -16,6 +16,13 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.emailTextField.becomeFirstResponder()
+        
+    }
+
     //Sign Up Action for email
     @IBAction func createAccountAction(_ sender: AnyObject) {
         if emailTextField.text == "" {

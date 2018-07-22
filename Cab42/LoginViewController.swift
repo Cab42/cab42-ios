@@ -2,8 +2,8 @@
 //  LoginViewController.swift
 //  Cab42
 //
-//  Created by James Dacombe on 16/11/2016.
-//  Copyright © 2016 AppCoda. All rights reserved.
+//  Created by Andres Margendie on 22/07/2018.
+//  Copyright © 2018 AppCoda. All rights reserved.
 //
 
 import UIKit
@@ -20,10 +20,12 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
     @IBOutlet weak var btnGoogleSignIn: UIButton!
     @IBOutlet weak var btnFacebookSignIn: UIButton!
     
+    //Login Action using Gmail
     @IBAction func btnGoogleSignInPressed(_ sender: Any) {
          GIDSignIn.sharedInstance().signIn()
     }
     
+    //Login Action using Facebook
     @IBAction func btnFacebookSignInPressed(_ sender: Any) {
         let fbLoginManager = FBSDKLoginManager()
         fbLoginManager.logIn(withReadPermissions: ["public_profile", "email", "user_friends"], from: self) { (result, error) in
@@ -68,9 +70,23 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
         //Create the gmail login button look/feel
         GIDSignIn.sharedInstance().uiDelegate = self
         
+        emailTextField.rightViewMode = UITextFieldViewMode.always
+        let emailImageView = UIImageView(frame: CGRect(x: 0, y: -5, width: 20, height: 20))
+        let emailImage = UIImage(named: "icon-email")
+        emailImageView.image = emailImage
+        emailTextField.rightView = emailImageView
+        
+        passwordTextField.rightViewMode = UITextFieldViewMode.always
+        let passwordImageView = UIImageView(frame: CGRect(x: -5, y: 0, width: 40, height: 20))
+        let passwordImage = UIImage(named: "lock-icon")
+        passwordImageView.image = passwordImage
+        passwordTextField.rightView = passwordImageView
+
+        self.emailTextField.becomeFirstResponder()
+        
     }
     
-    //Login Action
+    //Login Action using email and password
     @IBAction func loginAction(_ sender: AnyObject) {
         if self.emailTextField.text == "" || self.passwordTextField.text == "" {
             //Alert to tell the user that there was an error because they didn't fill anything in the textfields because they didn't fill anything in

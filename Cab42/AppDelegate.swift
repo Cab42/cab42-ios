@@ -2,21 +2,21 @@
 //  AppDelegate.swift
 //  Cab42
 //
-//  Created by James Dacombe on 15/11/2016.
-//  Copyright © 2016 AppCoda. All rights reserved.
+//  Created by Andres Margendie on 22/07/2018.
+//  Copyright © 2018 AppCoda. All rights reserved.
 //
 
 import UIKit
 import Firebase
 import GoogleSignIn
 import FBSDKCoreKit
-
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     
-    
+    var window: UIWindow?
+
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
+        print ("1 paso por aqui.......................................................")
         if error != nil {
             print ("Error signing out: %@", error!.localizedDescription)
             return
@@ -40,9 +40,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
     }
     
-    
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        print("outtttttt")
+        print ("2. paso por aqui.......................................................")
         GIDSignIn.sharedInstance().signOut()
         try! Auth.auth().signOut()
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -50,16 +49,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     }
     
 
-    var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        print ("0. paso por aqui.......................................................")
         FirebaseApp.configure()
         
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance().delegate = self
         
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+      
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+       if Auth.auth().currentUser == nil {
+            print("NO USER") // this does print out in the console before the app crashes
+            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "Login")
+
+        } else {
+            print("USER ALREADY LOGED") // this does print out in the console before the app crashes
+            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "Home")
+       }
+
         
         return true
     }
@@ -69,7 +79,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any])
         -> Bool {
             
-            return GIDSignIn.sharedInstance().handle(url,
+            print ("3. paso por aqui.......................................................")
+           return GIDSignIn.sharedInstance().handle(url,
                                                      sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
                                                      annotation: [:])
     }
