@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		35B3B10B756BEDCA4DEF2373 /* Pods_Cab42.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91549D51D42876CF6CD5CDC3 /* Pods_Cab42.framework */; };
 		B20940F6210157DB00218FE9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B20940F5210157DB00218FE9 /* GoogleService-Info.plist */; };
+		B2096D8521054E120008D5B2 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2096D8421054E120008D5B2 /* MainViewController.swift */; };
+		B2096D872106534D0008D5B2 /* ButtonWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2096D862106534D0008D5B2 /* ButtonWithImage.swift */; };
 		B269CC582104A300007203D2 /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269CC572104A300007203D2 /* GroupViewController.swift */; };
 		B29A0E9C1FBB9DF00022E6C6 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */; };
 		B29A0E9F1FBB9E460022E6C6 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29A0E9D1FBB9E450022E6C6 /* Bolts.framework */; };
@@ -29,6 +31,8 @@
 		7262B321E4939D2B470FD032 /* Pods-Cab42.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cab42.release.xcconfig"; path = "Pods/Target Support Files/Pods-Cab42/Pods-Cab42.release.xcconfig"; sourceTree = "<group>"; };
 		91549D51D42876CF6CD5CDC3 /* Pods_Cab42.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cab42.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20940F5210157DB00218FE9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B2096D8421054E120008D5B2 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		B2096D862106534D0008D5B2 /* ButtonWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithImage.swift; sourceTree = "<group>"; };
 		B269CC572104A300007203D2 /* GroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
 		B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "Extras/FacebookSDKs-iOS-4.28.0/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		B29A0E9D1FBB9E450022E6C6 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = "Extras/FacebookSDKs-iOS-4.28.0/Bolts.framework"; sourceTree = "<group>"; };
@@ -83,6 +87,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B2096D88210663A10008D5B2 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		F4443AD31DF2DFDA00800C92 = {
 			isa = PBXGroup;
 			children = (
@@ -105,11 +116,14 @@
 		F4443ADE1DF2DFDA00800C92 /* Cab42 */ = {
 			isa = PBXGroup;
 			children = (
+				B2096D88210663A10008D5B2 /* Extensions */,
 				B20940F5210157DB00218FE9 /* GoogleService-Info.plist */,
+				B2096D862106534D0008D5B2 /* ButtonWithImage.swift */,
 				F4443AF11DF2E34F00800C92 /* SignUpViewController.swift */,
 				F4443AF21DF2E34F00800C92 /* HomeViewController.swift */,
 				B269CC572104A300007203D2 /* GroupViewController.swift */,
 				F4443AF31DF2E34F00800C92 /* LoginViewController.swift */,
+				B2096D8421054E120008D5B2 /* MainViewController.swift */,
 				F4443AF41DF2E34F00800C92 /* ResetPasswordViewController.swift */,
 				F4443ADF1DF2DFDA00800C92 /* AppDelegate.swift */,
 				F4443AE31DF2DFDA00800C92 /* Main.storyboard */,
@@ -268,8 +282,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2096D8521054E120008D5B2 /* MainViewController.swift in Sources */,
 				B269CC582104A300007203D2 /* GroupViewController.swift in Sources */,
 				F4443AF71DF2E34F00800C92 /* LoginViewController.swift in Sources */,
+				B2096D872106534D0008D5B2 /* ButtonWithImage.swift in Sources */,
 				F4443AF51DF2E34F00800C92 /* SignUpViewController.swift in Sources */,
 				F4443AF81DF2E34F00800C92 /* ResetPasswordViewController.swift in Sources */,
 				F4443AE01DF2DFDA00800C92 /* AppDelegate.swift in Sources */,

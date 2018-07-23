@@ -16,7 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     var window: UIWindow?
 
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
-        print ("1 paso por aqui.......................................................")
         if error != nil {
             print ("Error signing out: %@", error!.localizedDescription)
             return
@@ -41,7 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     }
     
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        print ("2. paso por aqui.......................................................")
         GIDSignIn.sharedInstance().signOut()
         try! Auth.auth().signOut()
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -52,7 +50,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        print ("0. paso por aqui.......................................................")
         FirebaseApp.configure()
         
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
@@ -67,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
         } else {
             print("USER ALREADY LOGED") // this does print out in the console before the app crashes
-            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "Home")
+            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "MianView")
        }
 
         
@@ -79,7 +76,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any])
         -> Bool {
             
-            print ("3. paso por aqui.......................................................")
            return GIDSignIn.sharedInstance().handle(url,
                                                      sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
                                                      annotation: [:])

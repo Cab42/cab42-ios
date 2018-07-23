@@ -327,7 +327,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vGB-OU-MCj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="239.19999999999999" y="-494.30284857571218"/>
+            <point key="canvasLocation" x="-29" y="-497"/>
         </scene>
         <!--Group View Controller-->
         <scene sceneID="VqW-Du-R9W">
@@ -369,7 +369,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5XD-bg-JoC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1156" y="-494.30284857571218"/>
+            <point key="canvasLocation" x="464" y="-496"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Qwm-yd-ybI">
@@ -389,15 +389,175 @@
             </objects>
             <point key="canvasLocation" x="-700" y="-494.30284857571218"/>
         </scene>
+        <!--Main View Controller-->
+        <scene sceneID="O4p-n5-caD">
+            <objects>
+                <viewController id="jaZ-yJ-nvk" customClass="MainViewController" customModule="Cab42" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="QkN-uu-p55"/>
+                        <viewControllerLayoutGuide type="bottom" id="HKF-Ro-yfV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1eC-AV-xp9">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xUL-de-bBr">
+                                <rect key="frame" x="16" y="72" width="175" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="yXw-pq-KJ1">
+                                        <rect key="frame" x="0.0" y="0.0" width="175" height="32"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="profile-male-small-icon" translatesAutoresizingMaskIntoConstraints="NO" id="HGA-XE-zJD">
+                                                <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                            </imageView>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h9V-js-726">
+                                                <rect key="frame" x="52" y="0.0" width="123" height="32"/>
+                                                <state key="normal" title="profile"/>
+                                                <connections>
+                                                    <segue destination="qXt-1e-ZTD" kind="show" id="ocL-CM-TsI"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="wgo-bL-OfQ">
+                                        <rect key="frame" x="0.0" y="32" width="175" height="32"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="inbox-small-icon" translatesAutoresizingMaskIntoConstraints="NO" id="0Sl-mG-i20">
+                                                <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                            </imageView>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O8R-c3-gFz">
+                                                <rect key="frame" x="52" y="0.0" width="123" height="32"/>
+                                                <state key="normal" title="Inbox"/>
+                                                <connections>
+                                                    <segue destination="Bkx-tw-8xA" kind="show" id="MRn-MS-xco"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="xAj-D5-C0n">
+                                        <rect key="frame" x="0.0" y="64" width="175" height="32"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="setting-small-icon" translatesAutoresizingMaskIntoConstraints="NO" id="CRU-mb-la8">
+                                                <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                            </imageView>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VfE-7w-XHC">
+                                                <rect key="frame" x="52" y="0.0" width="123" height="32"/>
+                                                <state key="normal" title="Settings"/>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="EFb-xN-3oP">
+                                        <rect key="frame" x="0.0" y="96" width="175" height="32"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="friends-small-icon" translatesAutoresizingMaskIntoConstraints="NO" id="Rbi-KH-kN8">
+                                                <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                            </imageView>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="42X-um-8as">
+                                                <rect key="frame" x="52" y="0.0" width="123" height="32"/>
+                                                <state key="normal" title="Invite your friends"/>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uhO-jk-jmH">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <color key="backgroundColor" red="0.59999999999999998" green="0.40000000000000002" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="uhO-jk-jmH" firstAttribute="leading" secondItem="1eC-AV-xp9" secondAttribute="leading" id="B7f-dK-Ogy"/>
+                            <constraint firstAttribute="trailing" secondItem="uhO-jk-jmH" secondAttribute="trailing" id="hQW-ED-CsZ"/>
+                            <constraint firstItem="uhO-jk-jmH" firstAttribute="top" secondItem="QkN-uu-p55" secondAttribute="bottom" id="iYn-bn-4ZX"/>
+                            <constraint firstItem="HKF-Ro-yfV" firstAttribute="top" secondItem="uhO-jk-jmH" secondAttribute="bottom" id="l8p-Ha-mMc"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="lxz-jd-Kgl">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="menu-small-icon" id="oM8-Oj-UDh">
+                            <connections>
+                                <action selector="mainMenuPressed:" destination="jaZ-yJ-nvk" id="z7G-Fk-Dcr"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="leadingC" destination="B7f-dK-Ogy" id="Ehl-qO-vyq"/>
+                        <outlet property="trailingC" destination="hQW-ED-CsZ" id="pmp-FB-yoJ"/>
+                        <outlet property="ubeView" destination="uhO-jk-jmH" id="0dA-bc-pyl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uFT-xN-MUS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="112.8" y="328.78560719640183"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="nYY-vS-ThR">
+            <objects>
+                <viewController id="Bkx-tw-8xA" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ke7-dw-Nix"/>
+                        <viewControllerLayoutGuide type="bottom" id="Ck3-Rb-Odb"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="pwd-tK-kcu">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.001523844092" green="0.53666322970000002" blue="0.002364382855" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="62q-nP-nV0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1047" y="1086"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="EL4-Na-xcb">
+            <objects>
+                <viewController id="qXt-1e-ZTD" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="cVc-jT-lFs"/>
+                        <viewControllerLayoutGuide type="bottom" id="IEu-cG-7Ol"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kdX-qF-81Q">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="1" green="0.38313802079999998" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iaS-B3-S8x" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4" y="1087"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="uZ5-yj-8F8">
+            <objects>
+                <navigationController storyboardIdentifier="MianView" automaticallyAdjustsScrollViewInsets="NO" id="zH8-a7-btF" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="bIS-7O-HME">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="jaZ-yJ-nvk" kind="relationship" relationship="rootViewController" id="pH7-Zj-8JB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bHO-ey-CIg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-700" y="319"/>
+        </scene>
     </scenes>
     <resources>
         <image name="fb_button" width="363" height="129"/>
+        <image name="friends-small-icon" width="32" height="32"/>
         <image name="g_button" width="363" height="129"/>
-        <image name="menu-small-icon" width="64" height="64"/>
+        <image name="inbox-small-icon" width="32" height="32"/>
+        <image name="menu-small-icon" width="32" height="32"/>
+        <image name="profile-male-small-icon" width="32" height="32"/>
+        <image name="setting-small-icon" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="zck-D5-27A"/>
         <segue reference="d7R-4T-WIa"/>
-        <segue reference="V5Z-ei-lQN"/>
+        <segue reference="jCO-ed-QLw"/>
     </inferredMetricsTieBreakers>
 </document>
