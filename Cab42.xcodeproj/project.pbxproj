@@ -11,6 +11,8 @@
 		B20940F6210157DB00218FE9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B20940F5210157DB00218FE9 /* GoogleService-Info.plist */; };
 		B2096D8521054E120008D5B2 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2096D8421054E120008D5B2 /* MainViewController.swift */; };
 		B2096D872106534D0008D5B2 /* ButtonWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2096D862106534D0008D5B2 /* ButtonWithImage.swift */; };
+		B2096D8D210676130008D5B2 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2096D8C210676130008D5B2 /* UserProfile.swift */; };
+		B2096D8F21067C640008D5B2 /* UIImageView+Rounded.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2096D8E21067C640008D5B2 /* UIImageView+Rounded.swift */; };
 		B269CC582104A300007203D2 /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269CC572104A300007203D2 /* GroupViewController.swift */; };
 		B29A0E9C1FBB9DF00022E6C6 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */; };
 		B29A0E9F1FBB9E460022E6C6 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29A0E9D1FBB9E450022E6C6 /* Bolts.framework */; };
@@ -33,6 +35,8 @@
 		B20940F5210157DB00218FE9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B2096D8421054E120008D5B2 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		B2096D862106534D0008D5B2 /* ButtonWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithImage.swift; sourceTree = "<group>"; };
+		B2096D8C210676130008D5B2 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		B2096D8E21067C640008D5B2 /* UIImageView+Rounded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Rounded.swift"; sourceTree = "<group>"; };
 		B269CC572104A300007203D2 /* GroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
 		B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "Extras/FacebookSDKs-iOS-4.28.0/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		B29A0E9D1FBB9E450022E6C6 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = "Extras/FacebookSDKs-iOS-4.28.0/Bolts.framework"; sourceTree = "<group>"; };
@@ -90,8 +94,17 @@
 		B2096D88210663A10008D5B2 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				B2096D8E21067C640008D5B2 /* UIImageView+Rounded.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B2096D8B210675EC0008D5B2 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B2096D8C210676130008D5B2 /* UserProfile.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		F4443AD31DF2DFDA00800C92 = {
@@ -116,6 +129,7 @@
 		F4443ADE1DF2DFDA00800C92 /* Cab42 */ = {
 			isa = PBXGroup;
 			children = (
+				B2096D8B210675EC0008D5B2 /* Controllers */,
 				B2096D88210663A10008D5B2 /* Extensions */,
 				B20940F5210157DB00218FE9 /* GoogleService-Info.plist */,
 				B2096D862106534D0008D5B2 /* ButtonWithImage.swift */,
@@ -288,8 +302,10 @@
 				B2096D872106534D0008D5B2 /* ButtonWithImage.swift in Sources */,
 				F4443AF51DF2E34F00800C92 /* SignUpViewController.swift in Sources */,
 				F4443AF81DF2E34F00800C92 /* ResetPasswordViewController.swift in Sources */,
+				B2096D8F21067C640008D5B2 /* UIImageView+Rounded.swift in Sources */,
 				F4443AE01DF2DFDA00800C92 /* AppDelegate.swift in Sources */,
 				F4443AF61DF2E34F00800C92 /* HomeViewController.swift in Sources */,
+				B2096D8D210676130008D5B2 /* UserProfile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
