@@ -8,7 +8,7 @@
 
 import UIKit
 
-class UserProfile: UIViewController {
+class UserProfile: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     
     @IBOutlet weak var profilePicture: UIImageView!
