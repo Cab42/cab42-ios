@@ -32,9 +32,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 //Print into the console if successfully logged in
                 print("You have successfully logged in using google account")
                 
-                //Go to the HomeViewController if the login is sucessful
+                //Go to the MianViewController if the login is sucessful
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "Home")
+                self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "MainView")
             }
         }
     }
@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
         } else {
             print("USER ALREADY LOGED") // this does print out in the console before the app crashes
-            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "MianView")
+            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "MainView")
        }
 
         

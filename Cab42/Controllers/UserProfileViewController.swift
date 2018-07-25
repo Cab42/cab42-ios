@@ -10,10 +10,11 @@ import UIKit
 
 class UserProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var profilePicture: UIImageView!
+
     var keys: [String] = []
     var values: [String] = []
-
-    @IBOutlet weak var tableView: UITableView!
     let cellIdentifier = "cellIdentifier"
     
       func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -35,14 +36,22 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
         return cell
     }
     
-    @IBOutlet weak var profilePicture: UIImageView!
+    internal func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let value = keys[indexPath.row]
+        if value == "Change Password" {
+            print(keys[indexPath.row])
+            performSegue(withIdentifier: "segueChangePassword", sender: self)
+        } else {
+             print("no me interesa")
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         profilePicture.roundedImage()
 
-        keys = ["First Name", "Last Name", "Email", "Change Password"]
-        values = ["Andres", "Margendie", "amargendie@gmail.com", ""]
+        keys = ["","First Name", "Last Name", "Email", "Change Password"]
+        values = ["","Andres", "Margendie", "amargendie", ">"]
 
     }
     

@@ -36,6 +36,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate {
         
         self.map.showsUserLocation = true
         // Ask for Authorisation from the User.
+        
         self.locationManager.requestAlwaysAuthorization()
         
         // For use in foreground

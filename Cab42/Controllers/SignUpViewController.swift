@@ -16,10 +16,12 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
+    @IBOutlet weak var nameTextField: UITextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.emailTextField.becomeFirstResponder()
+        self.nameTextField.becomeFirstResponder()
         
     }
 

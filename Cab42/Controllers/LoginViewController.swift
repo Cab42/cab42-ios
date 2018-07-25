@@ -52,7 +52,7 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                     
                     return
                 }
-                let vc = self.storyboard?.instantiateViewController(withIdentifier: "Home")
+                let vc = self.storyboard?.instantiateViewController(withIdentifier: "MainView")
                 self.present(vc!, animated: true, completion: nil)
                 
             })
@@ -100,8 +100,8 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                     if (Auth.auth().currentUser?.isEmailVerified)! {
                         //Print into the console if successfully logged in
                         print("You have successfully logged in")
-                        //Go to the HomeViewController if the login is sucessful
-                        let vc = self.storyboard?.instantiateViewController(withIdentifier: "Home")
+                        //Go to the MainViewViewController if the login is sucessful
+                        let vc = self.storyboard?.instantiateViewController(withIdentifier: "MainView")
                         self.present(vc!, animated: true, completion: nil)
                     } else{
                         Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
