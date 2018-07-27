@@ -17,20 +17,20 @@ protocol HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark)
 }
 
-class HomeViewController: UIViewController, CLLocationManagerDelegate  {
+class HomeViewController: UIViewController  {
     
     @IBOutlet weak var trailingC: NSLayoutConstraint!
     @IBOutlet weak var leadingC: NSLayoutConstraint!
     
     @IBOutlet weak var ubeView: UIView!
     @IBOutlet weak var map: MKMapView!
-
-    var menuIsVisible = false
+    
     let locationManager = CLLocationManager()
     var resultSearchController:UISearchController? = nil
     var selectedPin:MKPlacemark? = nil
-
-
+    
+    var menuIsVisible = false
+    
     @IBAction func mainMenuPressed(_ sender: Any) {
         //if the hamburger menu is NOT visible, then move the ubeView back to where it used to be
         if !menuIsVisible {
@@ -53,7 +53,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate  {
         }) { (animationComplete) in
             print("The animation is complete!")
         }
-  }
+    }
     
     @IBAction func changeMapType(_ sender: Any) {
         if map.mapType == MKMapType.standard {
@@ -82,17 +82,14 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate  {
             }
         }
     }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error){
-        print("Error \(error)")
-    }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         self.map.showsUserLocation = true
         self.map.showsScale = true
         self.map.showsCompass = true
+        map.delegate = self
         self.locationManager.requestAlwaysAuthorization()
         self.locationManager.requestWhenInUseAuthorization()
         
@@ -102,32 +99,28 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate  {
             locationManager.startUpdatingLocation()
         }
         
-        locationManager.requestLocation()
-        
         let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
         resultSearchController = UISearchController(searchResultsController: locationSearchTable)
         resultSearchController?.searchResultsUpdater = locationSearchTable
         
         let searchBar = resultSearchController!.searchBar
         searchBar.sizeToFit()
-        searchBar.placeholder = "Search for places"
+        searchBar.placeholder = "Type your destination"
         navigationItem.titleView = resultSearchController?.searchBar
         resultSearchController?.hidesNavigationBarDuringPresentation = false
         resultSearchController?.dimsBackgroundDuringPresentation = true
         definesPresentationContext = true
         locationSearchTable.mapView = map
         locationSearchTable.handleMapSearchDelegate = self
-
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
-        print("locations = \(locValue.latitude) \(locValue.longitude)")
-        let location = locations.last! as CLLocation
-        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-        self.map.setRegion(region, animated: true)
-        manager.stopUpdatingLocation()
+    
+    @objc func getDirections(){
+        if let selectedPin = selectedPin {
+            let mapItem = MKMapItem(placemark: selectedPin)
+            let launchOptions = [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving]
+            mapItem.openInMaps(launchOptions: launchOptions)
+        }
     }
     
     @IBAction func refLocation(_ sender: Any) {
@@ -141,12 +134,36 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate  {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-
     
+    
+}
+
+extension HomeViewController : CLLocationManagerDelegate {
+    
+    private func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if (status == .authorizedWhenInUse || status == .authorizedAlways ){
+            locationManager.requestLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
+        print("locations = \(locValue.latitude) \(locValue.longitude)")
+        let location = locations.last! as CLLocation
+        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        self.map.setRegion(region, animated: true)
+        manager.stopUpdatingLocation()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error){
+        print("Error \(error)")
+    }
 }
 
 extension HomeViewController: HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark){
+        print("HandleMapSearch.............")
         // cache the pin
         selectedPin = placemark
         // clear existing pins
@@ -161,6 +178,31 @@ extension HomeViewController: HandleMapSearch {
         map.addAnnotation(annotation)
         let span = MKCoordinateSpanMake(0.05, 0.05)
         let region = MKCoordinateRegionMake(placemark.coordinate, span)
+        print("annotation.title: "+annotation.title!)
         map.setRegion(region, animated: true)
     }
 }
+
+extension HomeViewController : MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?{
+        print("MKMapViewDelegate.............")
+        guard !(annotation is MKUserLocation) else { return nil }
+        let reuseId = "pin"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+        }
+        pinView?.pinTintColor = UIColor.orange
+        pinView?.canShowCallout = true
+        let smallSquare = CGSize(width: 30, height: 30)
+        let button = UIButton(frame: CGRect(origin: CGPoint.zero, size: smallSquare))
+        button.setBackgroundImage(UIImage(named: "car"), for: [])
+        button.addTarget(self, action: #selector(HomeViewController.getDirections), for: .touchUpInside)
+        pinView?.leftCalloutAccessoryView = button
+        
+        return pinView
+    }
+}
+
+
