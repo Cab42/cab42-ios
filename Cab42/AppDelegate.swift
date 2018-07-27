@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 
                 //Go to the MianViewController if the login is sucessful
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "MainView")
+                self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "Home")
             }
         }
     }
@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
         } else {
             print("USER ALREADY LOGED") // this does print out in the console before the app crashes
-            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "MainView")
+            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "Home")
        }
 
         

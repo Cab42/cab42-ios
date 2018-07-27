@@ -20,22 +20,28 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
     @IBOutlet weak var btnGoogleSignIn: UIButton!
     @IBOutlet weak var btnFacebookSignIn: UIButton!
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     //Login Action using Gmail
     @IBAction func btnGoogleSignInPressed(_ sender: Any) {
-         GIDSignIn.sharedInstance().signIn()
+        activityIndicator.startAnimating()
+        GIDSignIn.sharedInstance().signIn()
     }
     
     //Login Action using Facebook
     @IBAction func btnFacebookSignInPressed(_ sender: Any) {
+        activityIndicator.startAnimating()
         let fbLoginManager = FBSDKLoginManager()
         fbLoginManager.logIn(withReadPermissions: ["public_profile", "email", "user_friends"], from: self) { (result, error) in
             if let error = error {
                 print("Failed to login: \(error.localizedDescription)")
-                return
+                self.activityIndicator.stopAnimating()
+               return
             }
             
             guard let accessToken = FBSDKAccessToken.current() else {
                 print("Failed to get access token")
+                self.activityIndicator.stopAnimating()
                 return
             }
             
@@ -49,19 +55,19 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                     let okayAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
                     alertController.addAction(okayAction)
                     self.present(alertController, animated: true, completion: nil)
-                    
+                    self.activityIndicator.stopAnimating()
+
                     return
                 }
-                let vc = self.storyboard?.instantiateViewController(withIdentifier: "MainView")
+                self.activityIndicator.stopAnimating()
+                let vc = self.storyboard?.instantiateViewController(withIdentifier: "Home")
                 self.present(vc!, animated: true, completion: nil)
                 
             })
-            
+            self.activityIndicator.stopAnimating()
+
         }
-        
-        fbLoginManager.logOut()
- 
-        
+        //fbLoginManager.logOut()
     }
 
     override func viewDidLoad() {
@@ -86,8 +92,10 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
         
     }
     
+    
     //Login Action using email and password
     @IBAction func loginAction(_ sender: AnyObject) {
+        activityIndicator.startAnimating()
         if self.emailTextField.text == "" || self.passwordTextField.text == "" {
             //Alert to tell the user that there was an error because they didn't fill anything in the textfields because they didn't fill anything in
             let alertController = UIAlertController(title: "Error", message: "Please enter an email and password.", preferredStyle: .alert)
@@ -100,8 +108,8 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                     if (Auth.auth().currentUser?.isEmailVerified)! {
                         //Print into the console if successfully logged in
                         print("You have successfully logged in")
-                        //Go to the MainViewViewController if the login is sucessful
-                        let vc = self.storyboard?.instantiateViewController(withIdentifier: "MainView")
+                        //Go to the HomeViewController if the login is sucessful
+                        let vc = self.storyboard?.instantiateViewController(withIdentifier: "Home")
                         self.present(vc!, animated: true, completion: nil)
                     } else{
                         Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
@@ -133,6 +141,7 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                 }
             }
         }
+        activityIndicator.stopAnimating()
     }
         
 }

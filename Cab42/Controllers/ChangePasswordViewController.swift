@@ -72,11 +72,12 @@ class ChangePasswordViewController: UIViewController {
         //self.navigationController?.popToRootViewController(animated: true)
         //self.performSegue(withIdentifier: "segueBackToUserProfile", sender: self)
     }
-    
-     override func viewDidLoad() {
+
+    override func viewDidLoad() {
         super.viewDidLoad()
         self.currentPasswordlTextField.becomeFirstResponder()
-
+        
+        
         // Do any additional setup after loading the view.
     }
 
