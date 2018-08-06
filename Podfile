@@ -6,7 +6,11 @@ target 'Cab42' do
   use_frameworks!
 
   # Pods for Cab42
+  pod 'Firebase'
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
+  pod 'Firebase/Storage'
+#  pod 'Firebase/Database'
+  pod 'Firebase/Firestore'
   pod 'GoogleSignIn'
 end
