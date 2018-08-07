@@ -21,6 +21,7 @@
 		B269CC582104A300007203D2 /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269CC572104A300007203D2 /* GroupViewController.swift */; };
 		B2823F1E211780E000881AB4 /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2823F1D211780E000881AB4 /* CustomHeader.swift */; };
 		B2823F202117B80E00881AB4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2823F1F2117B80E00881AB4 /* Member.swift */; };
+		B2823F222119C4FF00881AB4 /* UIColor+AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2823F212119C4FF00881AB4 /* UIColor+AppColors.swift */; };
 		B28F5883211514FD00F148F1 /* UIView+BezierPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28F5882211514FD00F148F1 /* UIView+BezierPaths.swift */; };
 		B29670D3210BC10E0098C284 /* LocationSearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29670D2210BC10E0098C284 /* LocationSearchTable.swift */; };
 		B29A0E9C1FBB9DF00022E6C6 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */; };
@@ -55,6 +56,7 @@
 		B269CC572104A300007203D2 /* GroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
 		B2823F1D211780E000881AB4 /* CustomHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeader.swift; sourceTree = "<group>"; };
 		B2823F1F2117B80E00881AB4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
+		B2823F212119C4FF00881AB4 /* UIColor+AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+AppColors.swift"; sourceTree = "<group>"; };
 		B28F5882211514FD00F148F1 /* UIView+BezierPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+BezierPaths.swift"; sourceTree = "<group>"; };
 		B29670D2210BC10E0098C284 /* LocationSearchTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTable.swift; sourceTree = "<group>"; };
 		B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "Extras/FacebookSDKs-iOS-4.28.0/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 			children = (
 				B28F5882211514FD00F148F1 /* UIView+BezierPaths.swift */,
 				B2096D8E21067C640008D5B2 /* UIImageView+Rounded.swift */,
+				B2823F212119C4FF00881AB4 /* UIColor+AppColors.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B2823F202117B80E00881AB4 /* Member.swift in Sources */,
+				B2823F222119C4FF00881AB4 /* UIColor+AppColors.swift in Sources */,
 				B2A832CE21090B0A00D5D807 /* ChangePasswordViewController.swift in Sources */,
 				B2096D8521054E120008D5B2 /* HomeViewController.swift in Sources */,
 				B23BBF3821151A5900E341BA /* CreateGroupAnnotation.swift in Sources */,

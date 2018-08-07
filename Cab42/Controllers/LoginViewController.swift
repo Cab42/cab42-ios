@@ -60,14 +60,25 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                     return
                 }
                 self.activityIndicator.stopAnimating()
-                let vc = self.storyboard?.instantiateViewController(withIdentifier: "Home")
-                self.present(vc!, animated: true, completion: nil)
+                let isNewUser = user?.additionalUserInfo?.isNewUser
+                let userInfo = user?.user
+                let userLoged = self.getUserLoged(user: userInfo!,isNewUser: isNewUser!)
+                
+                let nav = self.storyboard?.instantiateViewController(withIdentifier: "Home") as! UINavigationController
+                let vc = nav.topViewController as! HomeViewController
+                vc.user = userLoged
+
+                self.present(nav, animated: true, completion: nil)
                 
             })
             self.activityIndicator.stopAnimating()
 
         }
         //fbLoginManager.logOut()
+    }
+    private func getUserLoged(user: Firebase.User, isNewUser: Bool ) -> User{
+        let userLoged = User(userInfo: user, isNewUser: isNewUser)
+        return userLoged
     }
 
     override func viewDidLoad() {

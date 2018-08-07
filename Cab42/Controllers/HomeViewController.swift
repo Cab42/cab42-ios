@@ -42,11 +42,14 @@ class HomeViewController: UIViewController {
     var user: User?
     
     var menuIsVisible = false
-    
     let locationManager = CLLocationManager()
     var resultSearchController:UISearchController? = nil
     
     var selectedPin:MKPlacemark? = nil
+    
+    let kHeaderSectionTag: Int = 6900;
+    var expandedSectionHeaderNumber: Int = -1
+    var expandedSectionHeader: UITableViewHeaderFooterView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,7 +58,7 @@ class HomeViewController: UIViewController {
         
         settingUpSearchBar()
         
-        self.query = baseQuery()        
+        self.query = baseQuery()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -210,6 +213,69 @@ class HomeViewController: UIViewController {
             }
         }
     }
+    
+    func tableViewExpandSection(_ section: Int, imageView: UIImageView) {
+        let sectionData = self.groups[section]
+        
+        if (sectionData.members.count == 0) {
+            self.expandedSectionHeaderNumber = -1;
+            return;
+        } else {
+            UIView.animate(withDuration: 0.4, animations: {
+                imageView.transform = CGAffineTransform(rotationAngle: (180.0 * CGFloat(Double.pi)) / 180.0)
+            })
+            var indexesPath = [IndexPath]()
+            for i in 0 ..< sectionData.members.count {
+                let index = IndexPath(row: i, section: section)
+                indexesPath.append(index)
+            }
+            self.expandedSectionHeaderNumber = section
+            self.tableView!.beginUpdates()
+            self.tableView!.insertRows(at: indexesPath, with: UITableViewRowAnimation.fade)
+            self.tableView!.endUpdates()
+        }
+    }
+    
+    func tableViewCollapeSection(_ section: Int, imageView: UIImageView) {
+        let sectionData = self.groups[section]
+        
+        self.expandedSectionHeaderNumber = -1;
+        if (sectionData.members.count == 0) {
+            return;
+        } else {
+            UIView.animate(withDuration: 0.4, animations: {
+                imageView.transform = CGAffineTransform(rotationAngle: (0.0 * CGFloat(Double.pi)) / 180.0)
+            })
+            var indexesPath = [IndexPath]()
+            for i in 0 ..< sectionData.members.count {
+                let index = IndexPath(row: i, section: section)
+                indexesPath.append(index)
+            }
+            self.tableView!.beginUpdates()
+            self.tableView!.deleteRows(at: indexesPath, with: UITableViewRowAnimation.fade)
+            self.tableView!.endUpdates()
+        }
+    }
+    
+    @objc func sectionHeaderWasTouched(_ sender: UITapGestureRecognizer) {
+        let headerView = sender.view as! UITableViewHeaderFooterView
+        let section    = headerView.tag
+        let eImageView = headerView.viewWithTag(kHeaderSectionTag + section) as? UIImageView
+        
+        if (self.expandedSectionHeaderNumber == -1) {
+            self.expandedSectionHeaderNumber = section
+            tableViewExpandSection(section, imageView: eImageView!)
+        } else {
+            if (self.expandedSectionHeaderNumber == section) {
+                tableViewCollapeSection(section, imageView: eImageView!)
+            } else {
+                let cImageView = self.view.viewWithTag(kHeaderSectionTag + self.expandedSectionHeaderNumber) as? UIImageView
+                tableViewCollapeSection(self.expandedSectionHeaderNumber, imageView: cImageView!)
+                tableViewExpandSection(section, imageView: eImageView!)
+            }
+        }
+    }
+    
 }
 
 extension HomeViewController : CLLocationManagerDelegate {
@@ -326,35 +392,51 @@ extension HomeViewController : CreateGroupViewDelegate {
 extension HomeViewController : UITableViewDataSource, UITableViewDelegate {
     
     
+    //Loads groups
     func numberOfSections(in tableView: UITableView) -> Int {
-        return groups.count + 1
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if (section == 0){
-            return 0
-        }else{
-           return groups[section - 1].members.count
+        if groups.count > 0 {
+            tableView.backgroundView = nil
+            return groups.count
+        } else {
+            let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: view.bounds.size.width, height: view.bounds.size.height))
+            messageLabel.text = "Retrieving groups.\nPlease wait."
+            messageLabel.numberOfLines = 0;
+            messageLabel.textAlignment = .center;
+            messageLabel.font = UIFont(name: "HelveticaNeue", size: 20.0)!
+            messageLabel.sizeToFit()
+            self.tableView.backgroundView = messageLabel;
         }
+        return 0
+        
+        // return groups.count + 1
+    }
+    
+    //Loads members by groups
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+        if (self.expandedSectionHeaderNumber == section) {
+            return groups[section].members.count
+        } else {
+            return 0;
+        }
+
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-        if (indexPath.section > 0){
-            let group = groups[indexPath.section - 1]
+            let group = groups[indexPath.section]
             
             let member = group.members[indexPath.row]
             
             cell.textLabel?.text = member.memberName
             cell.detailTextLabel?.text = String(member.passengers)
-        }
         return cell
     }
     
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+/*    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let  headerCell = tableView.dequeueReusableCell(withIdentifier: "headeCellIdentifier") as! CustomHeader
-       
+        
         if (section == 0){
             headerCell.textLabel?.text = "Groups"
             headerCell.detailTextLabel?.text = "Passengers"
@@ -363,16 +445,56 @@ extension HomeViewController : UITableViewDataSource, UITableViewDelegate {
             headerCell.textLabel?.text = groups[section-1].destination
             headerCell.detailTextLabel?.text = groups[section-1].maxPassengers
             headerCell.backgroundColor =  UIColor(red:72/255,green:141/255,blue:200/255,alpha:0.9)
-
+            
         }
-
+        
         return headerCell
         
+    }*/
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if (self.groups.count != 0) {
+            return self.groups[section].destination
+        }
+        return ""
     }
     
+    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 40.0
+        return 44.0;
     }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat{
+        return 0;
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        //recast your view as a UITableViewHeaderFooterView
+        let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
+        header.contentView.backgroundColor = UIColor.colorWithHexString(hexStr: "#408000")
+        header.textLabel?.textColor = UIColor.white
+        
+        if let viewWithTag = self.view.viewWithTag(kHeaderSectionTag + section) {
+            viewWithTag.removeFromSuperview()
+        }
+        let headerFrame = self.view.frame.size
+        let theImageView = UIImageView(frame: CGRect(x: headerFrame.width - 32, y: 13, width: 18, height: 18));
+        theImageView.image = UIImage(named: "Chevron-Dn-Wht")
+        theImageView.tag = kHeaderSectionTag + section
+        header.addSubview(theImageView)
+        
+        // make headers touchable
+        header.tag = section
+        let headerTapGesture = UITapGestureRecognizer()
+        headerTapGesture.addTarget(self, action: #selector(HomeViewController.sectionHeaderWasTouched(_:)))
+        header.addGestureRecognizer(headerTapGesture)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    
 }
 
 
