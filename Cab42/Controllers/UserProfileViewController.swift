@@ -24,7 +24,7 @@ class UserProfileViewController: UIViewController {
         profilePicture.roundedImage()
         
         keys = ["","Full Name", "Email","Change Password"]
-        values = ["",user?.getName(), user?.getEmail(), ">"]
+        values = ["",user?.getName(), user?.getEmail(), ""]
         
         if let url = user?.getPhotoURL() {
             profilePicture.contentMode = .scaleAspectFit
@@ -70,6 +70,10 @@ extension UserProfileViewController : UITableViewDataSource, UITableViewDelegate
         // Configure Cell
         cell.textLabel?.text = key
         cell.detailTextLabel?.text = value
+        if (indexPath.row == 3){
+            cell.accessoryView = UIImageView(image:UIImage(named:"replace-icon")!)
+            //UIImage(named: "replace-icon")
+        }
         
         return cell
     }

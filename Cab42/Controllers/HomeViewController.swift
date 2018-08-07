@@ -327,40 +327,51 @@ extension HomeViewController : UITableViewDataSource, UITableViewDelegate {
     
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return groups.count
+        return groups.count + 1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groups[section].members.count
+        if (section == 0){
+            return 0
+        }else{
+           return groups[section - 1].members.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-        
-        let group = groups[indexPath.section]
-        
-        let member = group.members[indexPath.row]
-
-        cell.textLabel?.text = member.memberName
-        cell.detailTextLabel?.text = String(member.passengers)
-        
+        if (indexPath.section > 0){
+            let group = groups[indexPath.section - 1]
+            
+            let member = group.members[indexPath.row]
+            
+            cell.textLabel?.text = member.memberName
+            cell.detailTextLabel?.text = String(member.passengers)
+        }
         return cell
     }
     
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let  headerCell = tableView.dequeueReusableCell(withIdentifier: "headeCellIdentifier") as! CustomHeader
-        
-        headerCell.textLabel?.text = groups[section].destination
-        headerCell.detailTextLabel?.text = groups[section].maxPassengers
-        headerCell.backgroundColor =  UIColor(red:72/255,green:141/255,blue:200/255,alpha:0.9)
-        
+       
+        if (section == 0){
+            headerCell.textLabel?.text = "Groups"
+            headerCell.detailTextLabel?.text = "Passengers"
+            headerCell.backgroundColor =  UIColor(red:36/255,green:70/255,blue:100/255,alpha:0.9)
+        }else{
+            headerCell.textLabel?.text = groups[section-1].destination
+            headerCell.detailTextLabel?.text = groups[section-1].maxPassengers
+            headerCell.backgroundColor =  UIColor(red:72/255,green:141/255,blue:200/255,alpha:0.9)
+
+        }
+
         return headerCell
         
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 50.0
+        return 40.0
     }
 }
 
