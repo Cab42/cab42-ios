@@ -66,5 +66,9 @@
     <string>Will you allow this app to always know your location?</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Do you allow this app to know your current location?</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Need your cam!</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Need your photos</string>
 </dict>
 </plist>

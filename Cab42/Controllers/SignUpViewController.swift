@@ -3,32 +3,35 @@
 //  Cab42
 //
 //  Created by Andres Margendie on 22/07/2018.
-//  Copyright © 2018 AppCoda. All rights reserved.
+//  Copyright © 2018 Margendie Consulting LDT. All rights reserved.
 //
 
 import UIKit
 import Firebase
 import FirebaseAuth
+import FirebaseFirestore
 
 class SignUpViewController: UIViewController, UITextFieldDelegate {
-
+    
     //Outlets
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
-    
+  
+    let db = Firestore.firestore()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.nameTextField.delegate = self
         self.emailTextField.delegate = self
         self.passwordTextField.delegate = self
-
+        
         self.nameTextField.becomeFirstResponder()
         
     }
-
+    
     /**
      * Called when 'return' key pressed. return NO to ignore.
      */
@@ -43,6 +46,22 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }
+
+    private func createUser(userId: String, name: String) {
+        db.collection("users").document(userId).setData([
+            "name": name,
+            "photoURL": "default"
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
+
+    }
+
+    
     //Sign Up Action for email
     @IBAction func createAccountAction(_ sender: AnyObject) {
         if emailTextField.text == "" {
@@ -58,14 +77,9 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
                 
                 if error == nil {
                     print("You have successfully signed up")
-                    //Goes to the Setup page which lets the user take a photo for their profile picture and also chose a username
-                    
-                    
                     Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
-                        
                         var title = ""
                         var message = ""
-                        
                         if error != nil {
                             title = "Error!"
                             message = (error?.localizedDescription)!
@@ -75,20 +89,17 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
                             self.emailTextField.text = ""
                             self.passwordTextField.text = ""
                         }
-                        
                         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                        
                         let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
                         alertController.addAction(defaultAction)
-                        
                         self.present(alertController, animated: true, completion: nil)
                     })
-                    
                     print("An email has been sent")
-
+                    
+                    self.createUser(userId: (user?.user.uid)! ,name: self.nameTextField.text!)
+                    
                     let vc = self.storyboard?.instantiateViewController(withIdentifier: "Login")
                     self.present(vc!, animated: true, completion: nil)
-                    
                 } else {
                     let alertController = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
                     
@@ -100,7 +111,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    
+   
     
 }
 

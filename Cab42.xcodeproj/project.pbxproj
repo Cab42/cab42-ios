@@ -22,6 +22,7 @@
 		B2823F1E211780E000881AB4 /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2823F1D211780E000881AB4 /* CustomHeader.swift */; };
 		B2823F202117B80E00881AB4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2823F1F2117B80E00881AB4 /* Member.swift */; };
 		B2823F222119C4FF00881AB4 /* UIColor+AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2823F212119C4FF00881AB4 /* UIColor+AppColors.swift */; };
+		B2823F25211A425D00881AB4 /* UserDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2823F24211A425D00881AB4 /* UserDB.swift */; };
 		B28F5883211514FD00F148F1 /* UIView+BezierPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28F5882211514FD00F148F1 /* UIView+BezierPaths.swift */; };
 		B29670D3210BC10E0098C284 /* LocationSearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29670D2210BC10E0098C284 /* LocationSearchTable.swift */; };
 		B29A0E9C1FBB9DF00022E6C6 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */; };
@@ -57,6 +58,7 @@
 		B2823F1D211780E000881AB4 /* CustomHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeader.swift; sourceTree = "<group>"; };
 		B2823F1F2117B80E00881AB4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		B2823F212119C4FF00881AB4 /* UIColor+AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+AppColors.swift"; sourceTree = "<group>"; };
+		B2823F24211A425D00881AB4 /* UserDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDB.swift; sourceTree = "<group>"; };
 		B28F5882211514FD00F148F1 /* UIView+BezierPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+BezierPaths.swift"; sourceTree = "<group>"; };
 		B29670D2210BC10E0098C284 /* LocationSearchTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTable.swift; sourceTree = "<group>"; };
 		B29A0E9B1FBB9DF00022E6C6 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "Extras/FacebookSDKs-iOS-4.28.0/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
@@ -175,6 +177,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		B2823F23211A421800881AB4 /* Firestone */ = {
+			isa = PBXGroup;
+			children = (
+				B2823F24211A425D00881AB4 /* UserDB.swift */,
+			);
+			path = Firestone;
+			sourceTree = "<group>";
+		};
 		F4443AD31DF2DFDA00800C92 = {
 			isa = PBXGroup;
 			children = (
@@ -200,13 +210,14 @@
 				F4443ADF1DF2DFDA00800C92 /* AppDelegate.swift */,
 				F4443AE31DF2DFDA00800C92 /* Main.storyboard */,
 				F4443AE81DF2DFDA00800C92 /* LaunchScreen.storyboard */,
+				F4443AE61DF2DFDA00800C92 /* Assets.xcassets */,
 				B2096D8B210675EC0008D5B2 /* Controllers */,
 				B2096D88210663A10008D5B2 /* Extensions */,
+				B2823F23211A421800881AB4 /* Firestone */,
 				B200F80A210F88060028ED02 /* Model */,
 				B200F8202115036D0028ED02 /* Singletons */,
-				B23BBF2E2115196C00E341BA /* Views */,
 				B2096D9021067ED70008D5B2 /* Utils */,
-				F4443AE61DF2DFDA00800C92 /* Assets.xcassets */,
+				B23BBF2E2115196C00E341BA /* Views */,
 				B20940F5210157DB00218FE9 /* GoogleService-Info.plist */,
 				F4443AEB1DF2DFDA00800C92 /* Info.plist */,
 			);
@@ -379,6 +390,7 @@
 				B2823F202117B80E00881AB4 /* Member.swift in Sources */,
 				B2823F222119C4FF00881AB4 /* UIColor+AppColors.swift in Sources */,
 				B2A832CE21090B0A00D5D807 /* ChangePasswordViewController.swift in Sources */,
+				B2823F25211A425D00881AB4 /* UserDB.swift in Sources */,
 				B2096D8521054E120008D5B2 /* HomeViewController.swift in Sources */,
 				B23BBF3821151A5900E341BA /* CreateGroupAnnotation.swift in Sources */,
 				B269CC582104A300007203D2 /* GroupViewController.swift in Sources */,

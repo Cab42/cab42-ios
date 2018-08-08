@@ -3,47 +3,45 @@
 //  Cab42
 //
 //  Created by Andres Margendie on 04/08/2018.
-//  Copyright © 2018 AppCoda. All rights reserved.
+//  Copyright © 2018 Margendie Consulting LDT. All rights reserved.
 //
 
 import Firebase
 
 class User: NSObject {
     
-    var userId: String = ""
+    var userId: String
     var isNewUser: Bool = false
+    var name: String = ""
     
-    var userInfo: Firebase.User?
-    var name: String
+    var email: String = ""
+    var photoURL: URL = URL(string: "default")!
+    var providerID: String = ""
+    var phoneNumber: String = ""
+    var address: String = ""
     
-    init(name: String) {
+    init(userId: String) {
+        self.userId = userId
+    }
+    
+    init(userId: String, name: String, email: String, photoURL: URL, providerID: String) {
+        self.userId = userId
         self.name = name
+        self.email = email
+        self.photoURL = photoURL
+        self.providerID = providerID
     }
     
-    init(userInfo: Firebase.User, isNewUser: Bool ) {
-        self.userInfo = userInfo
-        self.isNewUser = isNewUser
-        self.name = userInfo.displayName!
-    }
-
     func getEmail () -> String{
-        if let email = userInfo?.email {
-            return email
-        } else {
-            return ""
-        }
+        return email
     }
     
     func getUserId () -> String{
-        if let uid = userInfo?.uid {
-            return uid
-        } else {
-            return ""
-        }
+        return userId
     }
     
     func getPhotoURL () -> URL{
-        return (userInfo?.photoURL)!
+        return photoURL
     }
     
     func getName () -> String{
@@ -51,15 +49,11 @@ class User: NSObject {
     }
     
     func getPhoneNumber () -> String{
-        return (userInfo?.phoneNumber)!
+        return phoneNumber
     }
-
+    
     func getProviderID () -> String{
-        if let providerID = userInfo?.providerID {
-            return providerID
-        } else {
-            return ""
-        }
+        return providerID
     }
     
 }

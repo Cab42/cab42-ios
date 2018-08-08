@@ -3,7 +3,7 @@
 //  Cab42
 //
 //  Created by Andres Margendie on 23/07/2018.
-//  Copyright © 2018 AppCoda. All rights reserved.
+//  Copyright © 2018 Margendie Consulting LDT. All rights reserved.
 //
 import UIKit
 import Firebase
@@ -41,6 +41,9 @@ class HomeViewController: UIViewController {
     var selectedGroup: Group?
     var user: User?
     
+    var originPostalCode: String?
+    var destinyPostalCode: String?
+
     var menuIsVisible = false
     let locationManager = CLLocationManager()
     var resultSearchController:UISearchController? = nil
@@ -214,67 +217,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    func tableViewExpandSection(_ section: Int, imageView: UIImageView) {
-        let sectionData = self.groups[section]
-        
-        if (sectionData.members.count == 0) {
-            self.expandedSectionHeaderNumber = -1;
-            return;
-        } else {
-            UIView.animate(withDuration: 0.4, animations: {
-                imageView.transform = CGAffineTransform(rotationAngle: (180.0 * CGFloat(Double.pi)) / 180.0)
-            })
-            var indexesPath = [IndexPath]()
-            for i in 0 ..< sectionData.members.count {
-                let index = IndexPath(row: i, section: section)
-                indexesPath.append(index)
-            }
-            self.expandedSectionHeaderNumber = section
-            self.tableView!.beginUpdates()
-            self.tableView!.insertRows(at: indexesPath, with: UITableViewRowAnimation.fade)
-            self.tableView!.endUpdates()
-        }
-    }
-    
-    func tableViewCollapeSection(_ section: Int, imageView: UIImageView) {
-        let sectionData = self.groups[section]
-        
-        self.expandedSectionHeaderNumber = -1;
-        if (sectionData.members.count == 0) {
-            return;
-        } else {
-            UIView.animate(withDuration: 0.4, animations: {
-                imageView.transform = CGAffineTransform(rotationAngle: (0.0 * CGFloat(Double.pi)) / 180.0)
-            })
-            var indexesPath = [IndexPath]()
-            for i in 0 ..< sectionData.members.count {
-                let index = IndexPath(row: i, section: section)
-                indexesPath.append(index)
-            }
-            self.tableView!.beginUpdates()
-            self.tableView!.deleteRows(at: indexesPath, with: UITableViewRowAnimation.fade)
-            self.tableView!.endUpdates()
-        }
-    }
-    
-    @objc func sectionHeaderWasTouched(_ sender: UITapGestureRecognizer) {
-        let headerView = sender.view as! UITableViewHeaderFooterView
-        let section    = headerView.tag
-        let eImageView = headerView.viewWithTag(kHeaderSectionTag + section) as? UIImageView
-        
-        if (self.expandedSectionHeaderNumber == -1) {
-            self.expandedSectionHeaderNumber = section
-            tableViewExpandSection(section, imageView: eImageView!)
-        } else {
-            if (self.expandedSectionHeaderNumber == section) {
-                tableViewCollapeSection(section, imageView: eImageView!)
-            } else {
-                let cImageView = self.view.viewWithTag(kHeaderSectionTag + self.expandedSectionHeaderNumber) as? UIImageView
-                tableViewCollapeSection(self.expandedSectionHeaderNumber, imageView: cImageView!)
-                tableViewExpandSection(section, imageView: eImageView!)
-            }
-        }
-    }
+ 
     
 }
 
@@ -291,14 +234,32 @@ extension HomeViewController : CLLocationManagerDelegate {
             return
             
         }
+        CLGeocoder().reverseGeocodeLocation(manager.location!, completionHandler: {
+            (placemarks, error) -> Void in
+            
+            if error != nil {
+                print("Location Error!")
+                return
+            }
+            
+            if let pm = placemarks?.first {
+                self.originPostalCode = pm.postalCode
+                print("postalCode:::"+self.originPostalCode!)
+
+            } else {
+                print("error with data")
+            }
+        })
+        
         print("locations = \(locValue.latitude) \(locValue.longitude)")
         let location = locations.last! as CLLocation
+        
         let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
         self.map.setRegion(region, animated: true)
         manager.stopUpdatingLocation()
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error){
         print("Error \(error)")
     }
@@ -308,6 +269,10 @@ extension HomeViewController: HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark){
         // cache the pin
         selectedPin = placemark
+
+        print("placemark.addressDictionary:::: " + (placemark.addressDictionary?.description)!)
+        
+        self.destinyPostalCode = placemark.postalCode
         // clear existing pins
         var locality = ""
         if let _ = placemark.locality,
@@ -494,7 +459,67 @@ extension HomeViewController : UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func tableViewExpandSection(_ section: Int, imageView: UIImageView) {
+        let sectionData = self.groups[section]
+        
+        if (sectionData.members.count == 0) {
+            self.expandedSectionHeaderNumber = -1;
+            return;
+        } else {
+            UIView.animate(withDuration: 0.4, animations: {
+                imageView.transform = CGAffineTransform(rotationAngle: (180.0 * CGFloat(Double.pi)) / 180.0)
+            })
+            var indexesPath = [IndexPath]()
+            for i in 0 ..< sectionData.members.count {
+                let index = IndexPath(row: i, section: section)
+                indexesPath.append(index)
+            }
+            self.expandedSectionHeaderNumber = section
+            self.tableView!.beginUpdates()
+            self.tableView!.insertRows(at: indexesPath, with: UITableViewRowAnimation.fade)
+            self.tableView!.endUpdates()
+        }
+    }
     
+    func tableViewCollapeSection(_ section: Int, imageView: UIImageView) {
+        let sectionData = self.groups[section]
+        
+        self.expandedSectionHeaderNumber = -1;
+        if (sectionData.members.count == 0) {
+            return;
+        } else {
+            UIView.animate(withDuration: 0.4, animations: {
+                imageView.transform = CGAffineTransform(rotationAngle: (0.0 * CGFloat(Double.pi)) / 180.0)
+            })
+            var indexesPath = [IndexPath]()
+            for i in 0 ..< sectionData.members.count {
+                let index = IndexPath(row: i, section: section)
+                indexesPath.append(index)
+            }
+            self.tableView!.beginUpdates()
+            self.tableView!.deleteRows(at: indexesPath, with: UITableViewRowAnimation.fade)
+            self.tableView!.endUpdates()
+        }
+    }
+    
+    @objc func sectionHeaderWasTouched(_ sender: UITapGestureRecognizer) {
+        let headerView = sender.view as! UITableViewHeaderFooterView
+        let section    = headerView.tag
+        let eImageView = headerView.viewWithTag(kHeaderSectionTag + section) as? UIImageView
+        
+        if (self.expandedSectionHeaderNumber == -1) {
+            self.expandedSectionHeaderNumber = section
+            tableViewExpandSection(section, imageView: eImageView!)
+        } else {
+            if (self.expandedSectionHeaderNumber == section) {
+                tableViewCollapeSection(section, imageView: eImageView!)
+            } else {
+                let cImageView = self.view.viewWithTag(kHeaderSectionTag + self.expandedSectionHeaderNumber) as? UIImageView
+                tableViewCollapeSection(self.expandedSectionHeaderNumber, imageView: cImageView!)
+                tableViewExpandSection(section, imageView: eImageView!)
+            }
+        }
+    }
 }
 
 

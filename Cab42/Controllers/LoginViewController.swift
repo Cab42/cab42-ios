@@ -3,7 +3,7 @@
 //  Cab42
 //
 //  Created by Andres Margendie on 22/07/2018.
-//  Copyright © 2018 AppCoda. All rights reserved.
+//  Copyright © 2018 Margendie Consulting LDT. All rights reserved.
 //
 
 import UIKit
@@ -59,7 +59,6 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
 
                     return
                 }
-                self.activityIndicator.stopAnimating()
                 let isNewUser = user?.additionalUserInfo?.isNewUser
                 let userInfo = user?.user
                 let userLoged = self.getUserLoged(user: userInfo!,isNewUser: isNewUser!)
@@ -68,6 +67,7 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                 let vc = nav.topViewController as! HomeViewController
                 vc.user = userLoged
 
+                self.activityIndicator.stopAnimating()
                 self.present(nav, animated: true, completion: nil)
                 
             })
@@ -76,8 +76,27 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
         }
         //fbLoginManager.logOut()
     }
+    private func getProviderId(user: Firebase.User) -> String {
+        var id = ""
+        for p in user.providerData {
+            switch p.providerID {
+            case "facebook.com":
+                print("user is signed in with facebook")
+                id = "facebook.com"
+            case "google.com":
+                print("user is signed in with google")
+                id = "google.com"
+            default:
+                print("user is signed in with \(p.providerID)")
+                id = "password"
+            }
+        }
+        return id
+    }
+
     private func getUserLoged(user: Firebase.User, isNewUser: Bool ) -> User{
-        let userLoged = User(userInfo: user, isNewUser: isNewUser)
+        let providerID = getProviderId(user: user)
+        let userLoged = User(userId: user.uid, name: user.displayName ?? "", email: user.email!, photoURL: user.photoURL ?? URL(string: "default")!, providerID: providerID)
         return userLoged
     }
 
@@ -120,8 +139,32 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
                         //Print into the console if successfully logged in
                         print("You have successfully logged in")
                         //Go to the HomeViewController if the login is sucessful
-                        let vc = self.storyboard?.instantiateViewController(withIdentifier: "Home")
-                        self.present(vc!, animated: true, completion: nil)
+                        
+                        let isNewUser = user?.additionalUserInfo?.isNewUser
+                        let userInfo = user?.user
+                        let userLoged = self.getUserLoged(user: userInfo!,isNewUser: isNewUser!)
+                        let db = Firestore.firestore()
+                        let docRef = db.collection("users").document((userInfo?.uid)!)
+                        
+                        docRef.getDocument { (document, error) in
+                            if let document = document, document.exists {
+                                let userData = document.data()
+                                
+                                userLoged.name = (userData!["name"] as? String)!
+                                userLoged.photoURL = URL (string: (userData!["photoURL"] as? String)!)!
+                                
+                                print("Document data1: \(String(describing: userData))")
+                            } else {
+                                print("Document does not exist")
+                            }
+                        }
+
+                        let nav = self.storyboard?.instantiateViewController(withIdentifier: "Home") as! UINavigationController
+                        let vc = nav.topViewController as! HomeViewController
+                        vc.user = userLoged
+                        self.present(nav, animated: true, completion: nil)
+
+                        
                     } else{
                         Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
                             var title = ""
