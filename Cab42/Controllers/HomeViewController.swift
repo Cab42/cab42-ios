@@ -38,11 +38,11 @@ class HomeViewController: UIViewController {
     var documents: [DocumentSnapshot] = []
     
     var groups = [Group]()
-    var selectedGroup: Group?
+    var group: Group?
     var user: User?
     
     var originPostalCode: String?
-    var destinyPostalCode: String?
+    var originGeoPoint: GeoPoint?
 
     var menuIsVisible = false
     let locationManager = CLLocationManager()
@@ -244,7 +244,9 @@ extension HomeViewController : CLLocationManagerDelegate {
             
             if let pm = placemarks?.first {
                 self.originPostalCode = pm.postalCode
+                self.originGeoPoint = GeoPoint(latitude: (pm.location?.coordinate.latitude)! ,longitude: (pm.location?.coordinate.longitude)!)
                 print("postalCode:::"+self.originPostalCode!)
+                print("postalCode:::"+self.originGeoPoint.debugDescription)
 
             } else {
                 print("error with data")
@@ -272,16 +274,17 @@ extension HomeViewController: HandleMapSearch {
 
         print("placemark.addressDictionary:::: " + (placemark.addressDictionary?.description)!)
         
-        self.destinyPostalCode = placemark.postalCode
         // clear existing pins
         var locality = ""
         if let _ = placemark.locality,
             let _ = placemark.administrativeArea {
             locality = "(" + placemark.locality! + "-" + placemark.administrativeArea! + ")"
         }
-        let group = Group(destination:placemark.name!, locality: locality)
-        group.location = placemark.coordinate
-        let annotation = CreateGroupAnnotation(group: group)
+        self.group = Group(destination:placemark.name!, locality: locality)
+        self.group?.postalCode = placemark.postalCode ?? ""
+        self.group?.location = placemark.coordinate
+        self.group?.destinationGeoPoint = GeoPoint(latitude: placemark.coordinate.latitude,longitude: placemark.coordinate.longitude)
+        let annotation = CreateGroupAnnotation(group: self.group!)
         map.removeAnnotations(map.annotations)
         map.addAnnotation(annotation)
         
@@ -333,13 +336,47 @@ extension HomeViewController : MKMapViewDelegate {
 }
 
 extension HomeViewController : CreateGroupViewDelegate {
-    func detailsRequestedForPerson(group: Group) {
-        self.selectedGroup = group
-        getDirections()
+    
+    func createGroup(passengers: Int, suitcases: Int) {
+        //getDirections()
         //self.performSegue(withIdentifier: "Home", sender: nil)
-        self.loadGroups()
+        let member: Member = createMember(passengers: passengers, suitcases: suitcases)
+        group?.originGeoPoint = self.originGeoPoint
+        self.group?.members.append(member)
+        saveGroup(group: self.group!)
+        //self.loadGroups()
+
     }
     
+    
+    private func saveGroup(group: Group){
+        let docData: [String: Any] = [
+            "active": true,
+            "destination": group.destination,
+            "locality": group.locality,
+            "maxPassengers": group.maxPassengers,
+    //        "members": group.members,
+            "destinationGeoPoint": group.destinationGeoPoint!,
+            "originGeoPoint": group.originGeoPoint!
+        ]
+        
+        print(docData)
+
+        var ref: DocumentReference? = nil
+        ref = db.collection("groups").addDocument(data: docData) { err in
+            if let err = err {
+                print("Error adding document: \(err)")
+            } else {
+                print("Document added with ID: \(ref!.documentID)")
+            }
+        }
+        
+    }
+    
+    internal func createMember(passengers: Int, suitcases: Int) -> Member{
+        return  Member(userId: (user?.userId)!, memberName: (user?.name)!, passengers: passengers, suitcases: suitcases)
+    }
+
     func loadGroups(destiny: String = "") {
         self.db.collection("groups").getDocuments() { (querySnapshot, err) in
             if let err = err {

@@ -83,8 +83,8 @@ class CreateGroupAnnotationView: MKAnnotationView {
             let createGroupView = views.first!
             createGroupView.delegate = self.groupDetailDelegate
             
-            if let personAnnotation = annotation as? CreateGroupAnnotation {
-                let group = personAnnotation.group
+            if let groupAnnotation = annotation as? CreateGroupAnnotation {
+                let group = groupAnnotation.group
                 createGroupView.configureWithGroup(group: group, parent: self)
             }
             

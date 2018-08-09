@@ -7,7 +7,7 @@
 //
 
 protocol CreateGroupViewDelegate: class {
-    func detailsRequestedForPerson(group: Group)
+    func createGroup(passengers: Int, suitcases: Int)
 }
 
 import UIKit
@@ -29,7 +29,7 @@ class CreateGroupView: UIView{
     
     @IBAction func crearGroupBtnPressed(_ sender: Any) {
         self.parentAnnotationView?.removeCalloutView(animated: false)
-       delegate?.detailsRequestedForPerson(group: group)
+        delegate?.createGroup(passengers: Int(passengersLabel.text!)!, suitcases: 0)
     }
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {

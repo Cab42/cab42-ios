@@ -29,7 +29,7 @@ class Member: NSObject {
         self.suitcases = suitcases
     }
 
-    override var description: String { return "Passengers: \(passengers). Suitcases: \(suitcases)." }
+    override var description: String { return "Name: \(memberName). Passengers: \(passengers). Suitcases: \(suitcases)." }
 }
 
 extension Member{
