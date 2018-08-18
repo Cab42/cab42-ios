@@ -12,10 +12,20 @@ import UIKit
 import CoreLocation
 
 class Member: NSObject {
-    var memberName: String
     var userId: String
+    var memberName: String
     var passengers: Int = 1
     var suitcases: Int = 0
+    
+    var dictionary: [String: Any] {
+        return [
+            "userId": userId,
+            "memberName": memberName,
+            "passengers": passengers,
+            "suitcases": suitcases
+        ]
+    }
+
     
     init(userId: String, memberName: String) {
         self.userId = userId
@@ -41,8 +51,9 @@ extension Member{
             let suitcases = dictionary["suitcases"] as? Int
             else {
                 return nil
-                
         }
         self.init(userId: userId, memberName: memberName, passengers: passengers, suitcases: suitcases)
     }
 }
+
+

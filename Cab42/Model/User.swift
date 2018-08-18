@@ -20,6 +20,12 @@ class User: NSObject {
     var phoneNumber: String = ""
     var address: String = ""
     
+    var dictionary: [String: Any] {
+        return [
+            "name": name,
+            "email": email
+        ]
+    }
     init(userId: String) {
         self.userId = userId
     }

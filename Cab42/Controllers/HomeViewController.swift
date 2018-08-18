@@ -18,7 +18,7 @@ protocol HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark)
 }
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var trailingC: NSLayoutConstraint!
     @IBOutlet weak var leadingC: NSLayoutConstraint!
@@ -33,7 +33,7 @@ class HomeViewController: UIViewController {
     let cellIdentifier = "cellIdentifier"
     
     let db = Firestore.firestore()
-    var listener : ListenerRegistration!
+    var listenerOrigin : ListenerRegistration!
     
     var documents: [DocumentSnapshot] = []
     
@@ -43,7 +43,7 @@ class HomeViewController: UIViewController {
     
     var originPostalCode: String?
     var originGeoPoint: GeoPoint?
-
+    
     var menuIsVisible = false
     let locationManager = CLLocationManager()
     var resultSearchController:UISearchController? = nil
@@ -54,6 +54,45 @@ class HomeViewController: UIViewController {
     var expandedSectionHeaderNumber: Int = -1
     var expandedSectionHeader: UITableViewHeaderFooterView!
     
+    //////////////////////////////////////////////////////////////
+    /*
+     
+     lazy private var dataSource: GroupTableViewDataSource = {
+     return dataSourceForQuery(baseQuery)
+     }()
+     
+     fileprivate var query: Query? {
+     didSet {
+     dataSource.stopUpdates()
+     tableView.dataSource = nil
+     if let query = query {
+     dataSource = dataSourceForQuery(query)
+     tableView.dataSource = dataSource
+     dataSource.startUpdates()
+     }
+     }
+     }
+     
+     private func dataSourceForQuery(_ query: Query) -> GroupsTableViewDataSource {
+     return GroupTableViewDataSource(query: query) { [unowned self] (changes) in
+     if self.dataSource.count > 0 {
+     self.tableView.backgroundView = nil
+     } else {
+     self.tableView.backgroundView = self.backgroundView
+     }
+     
+     self.tableView.reloadData()
+     }
+     }
+     
+     private lazy var baseQuery: Query = {
+     return Firestore.firestore().restaurants
+     .whereField("averageRating", isGreaterThan: 3.2)
+     .limit(to: 60)
+     }()
+     
+     */
+    /////////////////////////////////////////////////////////////////////////////////////////////////
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,34 +100,66 @@ class HomeViewController: UIViewController {
         
         settingUpSearchBar()
         
-        self.query = baseQuery()
+    }
+    
+    fileprivate var queryOrigin: Query? {
+        didSet {
+            if let listener = listenerOrigin {
+                listener.remove()
+            }
+        }
+    }
+    
+    fileprivate func nearbyGeoPoint(geoPoint: GeoPoint) -> [String:GeoPoint] {
+        let lat = 0.0144927536231884
+        let lon = 0.0181818181818182
+        let distance = 10
+        
+        let lowerLat = geoPoint.latitude - (lat * Double(distance))
+        let lowerLon = geoPoint.longitude - (lon * Double(distance))
+        
+        let greaterLat = geoPoint.latitude + (lat * Double(distance))
+        let greaterLon = geoPoint.longitude + (lon * Double(distance))
+        
+        let lesserGeopoint = GeoPoint(latitude: lowerLat, longitude: lowerLon)
+        let greaterGeopoint = GeoPoint(latitude: greaterLat, longitude: greaterLon)
+        
+        return [
+            "lesserGeopoint":lesserGeopoint,
+            "greaterGeopoint":greaterGeopoint
+        ]
+    }
+    
+    fileprivate func baseQuery() -> Query {
+
+        let groupsRef: Query = Firestore.firestore().groups
+        guard
+            let latitude = originGeoPoint?.latitude,
+            let longitude = originGeoPoint?.longitude
+            else{
+                return groupsRef
+        }
+        print(latitude)
+        print(longitude)
+        let arroundOriginGeoPoint = self.nearbyGeoPoint(geoPoint: originGeoPoint!)
+        //   let arroundDestinationGeoPoint = self.nearbyGeoPoint(geoPoint: originGeoPoint!)
+
+       return groupsRef
+//        .whereField("active", isEqualTo: false)
+        .whereField("originGeoPoint", isLessThan: arroundOriginGeoPoint["greaterGeopoint"]!)
+        .whereField("originGeoPoint", isGreaterThan: arroundOriginGeoPoint["lesserGeopoint"]!)
+  //      .limit(to: 3)
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.listener =  query?.addSnapshotListener { (documents, error) in
-            guard let snapshot = documents else {
-                print("Error fetching documents results: \(error!)")
-                return
-            }
-            
-            let results = snapshot.documents.map { (document) -> Group in
-                if let group = Group(dictionary: document.data(), groupId: document.documentID) {
-                    return group
-                } else {
-                    fatalError("Unable to initialize type \(Group.self) with dictionary \(document.data())")
-                }
-            }
-            
-            self.groups = results
-            self.documents = snapshot.documents
-            self.tableView.reloadData()
-            
-        }   }
+        
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.listener.remove()
+        self.listenerOrigin.remove()
     }
     
     override func didReceiveMemoryWarning() {
@@ -205,24 +276,6 @@ class HomeViewController: UIViewController {
         }
     }
     
-    fileprivate func baseQuery() -> Query {
-        return Firestore.firestore().collection("groups").limit(to: 50)
-    }
-    
-    fileprivate var query: Query? {
-        didSet {
-            if let listener = listener {
-                listener.remove()
-            }
-        }
-    }
-    
- 
-    
-}
-
-extension HomeViewController : CLLocationManagerDelegate {
-    
     private func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         if (status == .authorizedWhenInUse || status == .authorizedAlways ){
             locationManager.requestLocation()
@@ -232,166 +285,47 @@ extension HomeViewController : CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else {
             return
-            
         }
-        CLGeocoder().reverseGeocodeLocation(manager.location!, completionHandler: {
-            (placemarks, error) -> Void in
-            
-            if error != nil {
-                print("Location Error!")
-                return
-            }
-            
-            if let pm = placemarks?.first {
-                self.originPostalCode = pm.postalCode
-                self.originGeoPoint = GeoPoint(latitude: (pm.location?.coordinate.latitude)! ,longitude: (pm.location?.coordinate.longitude)!)
-                print("postalCode:::"+self.originPostalCode!)
-                print("postalCode:::"+self.originGeoPoint.debugDescription)
-
-            } else {
-                print("error with data")
-            }
-        })
         
         print("locations = \(locValue.latitude) \(locValue.longitude)")
         let location = locations.last! as CLLocation
+        self.originGeoPoint = GeoPoint(latitude: (location.coordinate.latitude) ,longitude: (location.coordinate.longitude))
         
+        if self.queryOrigin == nil {
+            self.queryOrigin = baseQuery()
+        }
+        
+        self.listenerOrigin =  queryOrigin?.addSnapshotListener { (documents, error) in
+            guard let snapshot = documents else {
+                print("Error fetching documents results: \(error!)")
+                return
+            }
+            
+            let results = snapshot.documents.map { (document) -> Group in
+                if let group = Group(document: document) {
+                    return group
+                } else {
+                    fatalError("Unable to initialize type \(Group.self) with dictionary \(document.data())")
+                }
+            }
+            
+            self.groups = results
+            self.documents = snapshot.documents
+            self.tableView.reloadData()
+            
+        }
+
         let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
         self.map.setRegion(region, animated: true)
         manager.stopUpdatingLocation()
+        
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error){
         print("Error \(error)")
     }
-}
-
-extension HomeViewController: HandleMapSearch {
-    func dropPinZoomIn(placemark:MKPlacemark){
-        // cache the pin
-        selectedPin = placemark
-
-        print("placemark.addressDictionary:::: " + (placemark.addressDictionary?.description)!)
-        
-        // clear existing pins
-        var locality = ""
-        if let _ = placemark.locality,
-            let _ = placemark.administrativeArea {
-            locality = "(" + placemark.locality! + "-" + placemark.administrativeArea! + ")"
-        }
-        self.group = Group(destination:placemark.name!, locality: locality)
-        self.group?.postalCode = placemark.postalCode ?? ""
-        self.group?.location = placemark.coordinate
-        self.group?.destinationGeoPoint = GeoPoint(latitude: placemark.coordinate.latitude,longitude: placemark.coordinate.longitude)
-        let annotation = CreateGroupAnnotation(group: self.group!)
-        map.removeAnnotations(map.annotations)
-        map.addAnnotation(annotation)
-        
-        let span = MKCoordinateSpanMake(0.01, 0.01)
-        let region = MKCoordinateRegionMake(placemark.coordinate, span)
-        map.setRegion(region, animated: true)
-    }
-}
-
-extension HomeViewController : MKMapViewDelegate {
     
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        guard !(annotation is MKUserLocation) else { return nil }
-        let reuseId = "CreateGroupAnnotation"
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? CreateGroupAnnotationView
-        if pinView == nil {
-            pinView = CreateGroupAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView?.groupDetailDelegate = self
-            
-        }
-        return pinView
-        
-    }
-    
-    
-    func mapView1(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?{
-        guard !(annotation is MKUserLocation) else { return nil }
-        let reuseId = "pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
-        
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-        }
-        pinView?.pinTintColor = UIColor.orange
-        pinView?.canShowCallout = true
-        let smallSquare = CGSize(width: 30, height: 30)
-        let button = UIButton(frame: CGRect(origin: CGPoint.zero, size: smallSquare))
-        button.setBackgroundImage(UIImage(named: "car"), for: [])
-        button.addTarget(self, action: #selector(HomeViewController.getDirections), for: .touchUpInside)
-        pinView?.leftCalloutAccessoryView = button
-        
-        //configureDetailView(annotationView: pinView!)
-        
-        return pinView
-    }
-    
-}
-
-extension HomeViewController : CreateGroupViewDelegate {
-    
-    func createGroup(passengers: Int, suitcases: Int) {
-        //getDirections()
-        //self.performSegue(withIdentifier: "Home", sender: nil)
-        let member: Member = createMember(passengers: passengers, suitcases: suitcases)
-        group?.originGeoPoint = self.originGeoPoint
-        self.group?.members.append(member)
-        saveGroup(group: self.group!)
-        //self.loadGroups()
-
-    }
-    
-    
-    private func saveGroup(group: Group){
-        let docData: [String: Any] = [
-            "active": true,
-            "destination": group.destination,
-            "locality": group.locality,
-            "maxPassengers": group.maxPassengers,
-    //        "members": group.members,
-            "destinationGeoPoint": group.destinationGeoPoint!,
-            "originGeoPoint": group.originGeoPoint!
-        ]
-        
-        print(docData)
-
-        var ref: DocumentReference? = nil
-        ref = db.collection("groups").addDocument(data: docData) { err in
-            if let err = err {
-                print("Error adding document: \(err)")
-            } else {
-                print("Document added with ID: \(ref!.documentID)")
-            }
-        }
-        
-    }
-    
-    internal func createMember(passengers: Int, suitcases: Int) -> Member{
-        return  Member(userId: (user?.userId)!, memberName: (user?.name)!, passengers: passengers, suitcases: suitcases)
-    }
-
-    func loadGroups(destiny: String = "") {
-        self.db.collection("groups").getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
-                    print("\(document.documentID) => \(document.data())")
-                }
-            }
-        }
-    }
-}
-
-
-extension HomeViewController : UITableViewDataSource, UITableViewDelegate {
     
     
     //Loads groups
@@ -415,44 +349,26 @@ extension HomeViewController : UITableViewDataSource, UITableViewDelegate {
     
     //Loads members by groups
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
+        
         if (self.expandedSectionHeaderNumber == section) {
             return groups[section].members.count
         } else {
             return 0;
         }
-
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-            let group = groups[indexPath.section]
-            
-            let member = group.members[indexPath.row]
-            
-            cell.textLabel?.text = member.memberName
-            cell.detailTextLabel?.text = String(member.passengers)
+        let group = groups[indexPath.section]
+        
+        let member = group.members[indexPath.row]
+        
+        cell.textLabel?.text = member.memberName
+        cell.detailTextLabel?.text = String(member.passengers)
         return cell
     }
     
-    
-/*    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let  headerCell = tableView.dequeueReusableCell(withIdentifier: "headeCellIdentifier") as! CustomHeader
-        
-        if (section == 0){
-            headerCell.textLabel?.text = "Groups"
-            headerCell.detailTextLabel?.text = "Passengers"
-            headerCell.backgroundColor =  UIColor(red:36/255,green:70/255,blue:100/255,alpha:0.9)
-        }else{
-            headerCell.textLabel?.text = groups[section-1].destination
-            headerCell.detailTextLabel?.text = groups[section-1].maxPassengers
-            headerCell.backgroundColor =  UIColor(red:72/255,green:141/255,blue:200/255,alpha:0.9)
-            
-        }
-        
-        return headerCell
-        
-    }*/
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if (self.groups.count != 0) {
@@ -559,4 +475,108 @@ extension HomeViewController : UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+
+
+/////////////////////////////////////////////////////////////
+
+extension HomeViewController: HandleMapSearch {
+    func dropPinZoomIn(placemark:MKPlacemark){
+        // cache the pin
+        selectedPin = placemark
+        
+        print("placemark.addressDictionary:::: " + (placemark.addressDictionary?.description)!)
+        
+        // clear existing pins
+        
+        self.group = Group(destination:placemark.name!)
+        self.group?.location = placemark.coordinate
+        self.group?.destinationGeoPoint = GeoPoint(latitude: placemark.coordinate.latitude,longitude: placemark.coordinate.longitude)
+        let annotation = CreateGroupAnnotation(group: self.group!)
+        map.removeAnnotations(map.annotations)
+        map.addAnnotation(annotation)
+        
+        let span = MKCoordinateSpanMake(0.01, 0.01)
+        let region = MKCoordinateRegionMake(placemark.coordinate, span)
+        map.setRegion(region, animated: true)
+    }
+}
+
+extension HomeViewController : MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        guard !(annotation is MKUserLocation) else { return nil }
+        let reuseId = "CreateGroupAnnotation"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? CreateGroupAnnotationView
+        if pinView == nil {
+            pinView = CreateGroupAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinView?.groupDetailDelegate = self
+            
+        }
+        return pinView
+        
+    }
+    
+    
+    func mapView1(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?{
+        guard !(annotation is MKUserLocation) else { return nil }
+        let reuseId = "pin"
+        
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+        
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+        }
+        pinView?.pinTintColor = UIColor.orange
+        pinView?.canShowCallout = true
+        let smallSquare = CGSize(width: 30, height: 30)
+        let button = UIButton(frame: CGRect(origin: CGPoint.zero, size: smallSquare))
+        button.setBackgroundImage(UIImage(named: "car"), for: [])
+        button.addTarget(self, action: #selector(HomeViewController.getDirections), for: .touchUpInside)
+        pinView?.leftCalloutAccessoryView = button
+        
+        //configureDetailView(annotationView: pinView!)
+        
+        return pinView
+    }
+    
+}
+
+extension HomeViewController : CreateGroupViewDelegate {
+    
+    func createGroup(passengers: Int, suitcases: Int) {
+        let member: Member = Member(userId: (user?.userId)!, memberName: (user?.name)!, passengers: passengers, suitcases: suitcases)
+        group?.originGeoPoint = self.originGeoPoint
+        self.group?.members.append(member)
+        
+        print(group?.destinationAddress() ?? "")
+        
+        saveGroup(group: self.group!)
+        
+    }
+    
+    private func saveGroup(group: Group){
+        var ref: DocumentReference? = nil
+        ref = db.collection("groups").addDocument(data: group.dictionary) { err in
+            if let err = err {
+                print("Error adding document: \(err)")
+            } else {
+                print("Document added with ID: \(ref!.documentID)")
+            }
+        }
+        
+    }
+    
+    func loadGroups(destiny: String = "") {
+        self.db.collection("groups").getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    print("\(document.documentID) => \(document.data())")
+                }
+            }
+        }
+    }
+}
 

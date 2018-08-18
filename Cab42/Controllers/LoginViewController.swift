@@ -11,8 +11,12 @@ import Firebase
 import FirebaseAuth
 import GoogleSignIn
 import FBSDKLoginKit
+import FirebaseFirestore
 
-class LoginViewController: UIViewController, GIDSignInUIDelegate {
+class LoginViewController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate {
+    
+
+    
     
     //Outlets
     @IBOutlet weak var emailTextField: UITextField!
@@ -24,10 +28,34 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
     
     //Login Action using Gmail
     @IBAction func btnGoogleSignInPressed(_ sender: Any) {
+        print("111111")
         activityIndicator.startAnimating()
         GIDSignIn.sharedInstance().signIn()
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        //Create the gmail login button look/feel
+        GIDSignIn.sharedInstance().delegate = self
+        GIDSignIn.sharedInstance().uiDelegate = self
+        
+        emailTextField.rightViewMode = UITextFieldViewMode.always
+        let emailImageView = UIImageView(frame: CGRect(x: -5, y: 0, width: 24, height: 24))
+        let emailImage = UIImage(named: "email-24")
+        emailImageView.image = emailImage
+        emailTextField.rightView = emailImageView
+        
+        passwordTextField.rightViewMode = UITextFieldViewMode.always
+        let passwordImageView = UIImageView(frame: CGRect(x: -5, y: 0, width: 24, height: 24))
+        let passwordImage = UIImage(named: "lock-24")
+        passwordImageView.image = passwordImage
+        passwordTextField.rightView = passwordImageView
+        
+        self.emailTextField.becomeFirstResponder()
+        
+    }
+
     //Login Action using Facebook
     @IBAction func btnFacebookSignInPressed(_ sender: Any) {
         activityIndicator.startAnimating()
@@ -100,27 +128,48 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
         return userLoged
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-                
-        //Create the gmail login button look/feel
-        GIDSignIn.sharedInstance().uiDelegate = self
-        
-        emailTextField.rightViewMode = UITextFieldViewMode.always
-        let emailImageView = UIImageView(frame: CGRect(x: 0, y: -5, width: 20, height: 20))
-        let emailImage = UIImage(named: "icon-email")
-        emailImageView.image = emailImage
-        emailTextField.rightView = emailImageView
-        
-        passwordTextField.rightViewMode = UITextFieldViewMode.always
-        let passwordImageView = UIImageView(frame: CGRect(x: -5, y: 0, width: 40, height: 20))
-        let passwordImage = UIImage(named: "lock-icon")
-        passwordImageView.image = passwordImage
-        passwordTextField.rightView = passwordImageView
-
-        self.emailTextField.becomeFirstResponder()
-        
+    func sign(inWillDispatch signIn: GIDSignIn!, error: Error!) {
+        print("ahora estamos")
+        if error != nil {
+            print("y tu que")
+            print ("Error signing out: %@", error!.localizedDescription)
+            return
+        }
     }
+    
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        self.activityIndicator.stopAnimating()
+        
+        if error != nil {
+            print ("Error signing out: %@", error!.localizedDescription)
+            return
+        }
+        
+        guard let authentication = user.authentication else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                       accessToken: authentication.accessToken)
+        Auth.auth().signInAndRetrieveData(with: credential) { (user, error) in
+            if  error != nil {
+                print ("Error signing out: %@", error!.localizedDescription)
+                return
+            }else{
+                //Print into the console if sucessfully logged in
+                print("You have successfully logged in using google account")
+                
+                let isNewUser = user?.additionalUserInfo?.isNewUser
+                let userInfo = user?.user
+                let userLoged = self.getUserLoged(user: userInfo!,isNewUser: isNewUser!)
+                
+                let nav = self.storyboard?.instantiateViewController(withIdentifier: "Home") as! UINavigationController
+                let vc = nav.topViewController as! HomeViewController
+                vc.user = userLoged
+                
+                self.activityIndicator.stopAnimating()
+                self.present(nav, animated: true, completion: nil)
+            }
+        }
+    }
+    
     
     
     //Login Action using email and password

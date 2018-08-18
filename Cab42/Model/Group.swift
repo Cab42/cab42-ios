@@ -6,57 +6,124 @@
 //  Copyright © 2018 Margendie Consulting LDT. All rights reserved.
 //
 
+import FirebaseFirestore
 import UIKit
 import CoreLocation
 import Firebase
 
-class Group: NSObject {
-    var groupId: String = ""
+/// A restaurant, created by a user.
+struct Group {
+    
+    /// The ID of the restaurant, generated from Firestore.
+    var documentID: String = ""
+    
     var destination: String
-    var postalCode: String = ""
-    var locality: String
-    var maxPassengers: String = "10"
-    var members = [Member]()
-    var location: CLLocationCoordinate2D = kCLLocationCoordinate2DInvalid
+    var active: Bool = true
+    var locality: String = ""
+    var maxPassengers: Int = 10
     var originGeoPoint: GeoPoint?
     var destinationGeoPoint: GeoPoint?
-
+    var members = [Member]()
     
-    var dictionary: [String: Any] {
-        return [
-            "destination": destination,
-            "locality": locality,
-            "maxPassengers": maxPassengers,
-            "members": members,
-            "location": location
-        ]
-    }
+    var location: CLLocationCoordinate2D = kCLLocationCoordinate2DInvalid
+    
+    var geocoder = CLGeocoder()
+
+}
+
+// MARK: - Firestore interoperability
+
+extension Group: DocumentSerializable {
     
     init(destination: String) {
         self.destination = destination
-        self.locality = "Milton Keynes"
+    }
+
+    init(destination: String,
+         active: Bool,
+         locality: String,
+         maxPassengers: Int,
+         originGeoPoint: GeoPoint,
+         destinationGeoPoint: GeoPoint,
+         members: [Member]) {
+        let document = Firestore.firestore().groups.document()
+        
+        self.init(documentID: document.documentID,
+                  destination: destination,
+                  active: active,
+                  locality: locality,
+                  maxPassengers: maxPassengers,
+                  originGeoPoint: originGeoPoint,
+                  destinationGeoPoint: destinationGeoPoint,
+                  members: members,
+                  location: kCLLocationCoordinate2DInvalid,
+                  geocoder: CLGeocoder())
+
     }
     
-    init(destination: String, locality: String) {
-        self.destination = destination
-        self.locality = locality
+    /// Initializes a restaurant from a documentID and some data, ostensibly from Firestore.
+    private init?(documentID: String, dictionary: [String: Any]) {
+        guard
+            let destination = dictionary["destination"] as? String,
+            let active = dictionary["active"] as? Bool,
+            let locality = dictionary["locality"] as? String,
+            let maxPassengers = dictionary["maxPassengers"] as? Int,
+            let originGeoPoint = dictionary["originGeoPoint"] as? GeoPoint,
+            let destinationGeoPoint = dictionary["destinationGeoPoint"] as? GeoPoint,
+            let members  = dictionary["members"] as? [[String:AnyObject]]
+            else { return nil }
+        
+        let membersList = members.map { Member(userId: $0["userId"] as? String ?? "",
+                                               memberName : $0["memberName"] as? String ?? "",
+                                               passengers : $0["passengers"] as? Int ?? 1,
+                                               suitcases : $0["suitcases"] as? Int ?? 0) }
+        
+        self.init(documentID: documentID,
+                  destination: destination,
+                  active: active,
+                  locality: locality,
+                  maxPassengers: maxPassengers,
+                  originGeoPoint: originGeoPoint,
+                  destinationGeoPoint: destinationGeoPoint,
+                  members: membersList,
+                  location: kCLLocationCoordinate2DInvalid,
+                  geocoder: CLGeocoder())
     }
     
-    init(groupId: String, destination: String, maxPassengers: String) {
-        self.groupId = groupId
-        self.destination = destination
-        self.locality = "Milton Keynes"
-        self.maxPassengers = maxPassengers
+    init?(document: QueryDocumentSnapshot) {
+        self.init(documentID: document.documentID, dictionary: document.data())
     }
     
-    
-    init(groupId: String, destination: String, maxPassengers: String, members: [Member]) {
-        self.groupId = groupId
-        self.destination = destination
-        self.locality = "Milton Keynes"
-        self.maxPassengers = maxPassengers
-        self.members = members
+    init?(document: DocumentSnapshot) {
+        guard let data = document.data() else { return nil }
+        self.init(documentID: document.documentID, dictionary: data)
     }
+    
+    /// The dictionary representation of the restaurant for uploading to Firestore.
+    var documentData: [String: Any] {
+        return [
+            "destination": destination,
+            "active": active,
+            "locality": locality,
+            "maxPassengers": maxPassengers,
+            "members": membersDictionary(),
+            "originGeoPoint": originGeoPoint!,
+            "destinationGeoPoint": destinationGeoPoint!
+        ]
+    }
+
+    var dictionary: [String: Any] {
+        return [
+            "destination": destination,
+            "active": active,
+            "locality": locality,
+            "maxPassengers": maxPassengers,
+            "members": membersDictionary(),
+            "originGeoPoint": originGeoPoint!,
+            "destinationGeoPoint": destinationGeoPoint!
+        ]
+    }
+
     
     private func membersDescripcion() -> String{
         var description = ""
@@ -66,46 +133,54 @@ class Group: NSObject {
         return description
     }
     
+    private func membersDictionary() -> [[String: Any]]{
+        var membersDictionary = [[String: Any]]()
+        self.members.forEach { member in
+            membersDictionary.append(member.dictionary)
+        }
+        return membersDictionary
+    }
     
-     override var description: String { return "Destination: \(destination). maxPassengers: \(maxPassengers). Members: [\(membersDescripcion())]" }
+    var description: String { return "Destination: \(destination). maxPassengers: \(maxPassengers). Members: [\(membersDescripcion())]" }
     
+    func originAddress() ->  [String: Any]{
+        return frendlyAddress(latitude: (originGeoPoint?.latitude)!, longitude: (originGeoPoint?.longitude)!)
+    }
     
-}
-
-extension Group{
-    convenience init?(dictionary: [String : Any], groupId: String) {
-        guard
-            let destination = dictionary["destination"] as? String,
-            let maxPassengers = dictionary["maxPassengers"] as? String,
-            let members  = dictionary["members"] as? [[String:AnyObject]]
-            else {
-                return nil
-            }
+    func destinationAddress() ->  [String: Any]{
+        return frendlyAddress(latitude: (destinationGeoPoint?.latitude)!, longitude: (destinationGeoPoint?.longitude)!)
+    }
+    
+    private func frendlyAddress(latitude: Double, longitude: Double) ->  [String: Any]{
         
-        let membersList = members.map { Member(userId: $0["userId"] as? String ?? "",
-                                               memberName : $0["memberName"] as? String ?? "",
-                                               passengers : $0["passengers"] as? Int ?? 1,
-                                               suitcases : $0["suitcases"] as? Int ?? 0) }
-
-        self.init(groupId: groupId, destination: destination, maxPassengers: maxPassengers,members: membersList)
+        var frendlyAddress = [String: Any]()
+        
+        let l = CLLocation(latitude: latitude, longitude: longitude)
+        geocoder.reverseGeocodeLocation(l) { (placemarks, error) in
+            if let error = error {
+                print("Unable to Reverse Geocode Location (\(error))")
+                
+            } else {
+                if let placemarks = placemarks, let placemark = placemarks.first {
+                    frendlyAddress["name"] =  placemark.name
+                    frendlyAddress["subThoroughfare"] =  placemark.subThoroughfare
+                    frendlyAddress["thoroughfare"] =  placemark.thoroughfare
+                    frendlyAddress["postalCode"] =  placemark.postalCode
+                    frendlyAddress["subLocality"] =  placemark.subLocality
+                    frendlyAddress["locality"] =  placemark.locality
+                    frendlyAddress["subAdministrativeArea"] =  placemark.subAdministrativeArea
+                    frendlyAddress["administrativeArea"] =  placemark.administrativeArea
+                    frendlyAddress["country"] =  placemark.country
+                    print(frendlyAddress)
+                } else {
+                    print("No Matching Addresses Found")
+                }
+            }
+        }
+        return frendlyAddress
     }
 }
 
-/*
-extension Group: FirestoreModel {
-    
-    var documentID: String! {
-        return groupId
-    }
-    
-   
-    convenience init?(modelData: FirestoreModelData) {
-        try? self.init(
-            groupId: modelData.documentID,
-            destination: modelData.value(forKey: "destination"),
-            maxPassengers: modelData.value(forKey: "maxPassengers"),
-            members: modelData.value(forKey: "members")
-        )
-    }
-}
- */
+
+
+

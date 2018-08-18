@@ -10,44 +10,13 @@ import UIKit
 import Firebase
 import GoogleSignIn
 import FBSDKCoreKit
+import FirebaseFirestore
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
-        if error != nil {
-            print ("Error signing out: %@", error!.localizedDescription)
-            return
-        }
         
-        guard let authentication = user.authentication else { return }
-        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
-                                                       accessToken: authentication.accessToken)
-        Auth.auth().signInAndRetrieveData(with: credential) { (user, error) in
-            if  error != nil {
-                print ("Error signing out: %@", error!.localizedDescription)
-                return
-            }else{
-                //Print into the console if successfully logged in
-                print("You have successfully logged in using google account")
-                
-                let isNewUser = user?.additionalUserInfo?.isNewUser
-                let userInfo = user?.user
-                let userLoged = self.getUserLoged(user: userInfo!,isNewUser: isNewUser!)
-
-                print(userLoged.getName())
-                //Go to the MianViewController if the login is sucessful
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let nav = storyboard.instantiateViewController(withIdentifier: "Home") as! UINavigationController
-                let vc = nav.topViewController as! HomeViewController
-                vc.user = userLoged
-                self.window!.rootViewController = nav
-            }
-        }
-    }
-    
     private func getProviderId(user: Firebase.User) -> String {
         for p in user.providerData {
             switch p.providerID {
@@ -71,13 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         return userLoged
     }
     
-    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        GIDSignIn.sharedInstance().signOut()
-        try! Auth.auth().signOut()
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "Login")
-    }
-    
+
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -85,7 +48,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         FirebaseApp.configure()
         
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
-        GIDSignIn.sharedInstance().delegate = self
         
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
